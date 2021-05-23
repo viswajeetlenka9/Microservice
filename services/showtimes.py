@@ -11,7 +11,26 @@ with open("{}/database/showtimes.json".format(root_dir()), "r") as f:
 
 @app.route("/", methods=["GET"])
 def service_check():
-    return "Show times service running!"
+    return nice_json({
+        "uri": "/",
+        "subresource_uris": {
+            "showtimes": "/showtimes",
+            "showtime": "/showtimes/<date>"
+        }
+    })
+
+
+@app.route("/showtimes", methods=["GET"])
+def get_all_showtimes():
+    return nice_json(showtimes)
+
+
+@app.route("/showtimes/<date>", methods=["GET"])
+def get_showtime_by_date(date):
+    if date not in showtimes:
+        return "No show found with date {}".format(date)
+
+    return nice_json(showtimes[date])
 
 
 if __name__ == "__main__":
